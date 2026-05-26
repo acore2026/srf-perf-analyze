@@ -1,6 +1,55 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const copy = {
+type Language = 'en' | 'zh';
+type ActiveTab = 'micro' | 'macro';
+
+type Translation = {
+  language: string;
+  title: string;
+  subtitle: string;
+  microTab: string;
+  macroTab: string;
+  topologyTitle: string;
+  ranNodes: string;
+  amfInstances: string;
+  srfInstances: string;
+  totalLinkReduction: string;
+  fromTo: (from: string, to: string) => string;
+  microTitle: string;
+  microDescription: string;
+  ramPerLink: string;
+  cpuPerLink: string;
+  ramSaved: string;
+  cpuSaved: string;
+  pbuSaved: string;
+  pbuSpec: string;
+  macroTitle: string;
+  macroDescription: string;
+  currentFootprint: string;
+  currentFootprintHint: string;
+  pbuPerAmf: string;
+  footprintFormula: (amfs: number, pbus: number) => string;
+  coresPerVm: string;
+  ramPerVm: string;
+  storagePerVm: string;
+  linkReductionRatio: string;
+  totalVmsSaved: string;
+  targetFootprint: string;
+  coresFreed: string;
+  ramFreed: string;
+  storageFreed: string;
+  overallGain: string;
+  totalVms: string;
+  totalCpu: string;
+  totalRam: string;
+  totalStorage: string;
+  cores: string;
+  vms: string;
+  gb: string;
+  kb: string;
+};
+
+const copy: Record<Language, Translation> = {
   en: {
     language: '中文',
     title: '6G SRF Architecture ROI Dashboard',
@@ -94,7 +143,7 @@ const copy = {
 };
 
 export default function SRFCalculator() {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState<Language>('en');
   const t = copy[language];
   const locale = language === 'zh' ? 'zh-CN' : 'en-US';
 
@@ -104,7 +153,7 @@ export default function SRFCalculator() {
   const [srfInstances, setSrfInstances] = useState(2);
 
   // Tab State
-  const [activeTab, setActiveTab] = useState('micro');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('micro');
 
   // Micro-Level State
   const [ramCostKb, setRamCostKb] = useState(156);
@@ -149,11 +198,17 @@ export default function SRFCalculator() {
   const pctRamSaved = poolTotalRam > 0 && isPositiveGain ? macroRamSaved / poolTotalRam : 0;
   const pctStorageSaved = poolTotalStorage > 0 && isPositiveGain ? macroStorageSaved / poolTotalStorage : 0;
 
-  const formatNumber = (num) => new Intl.NumberFormat(locale).format(Math.round(num));
-  const formatDecimal = (num) => new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-  const formatPercent = (num) => new Intl.NumberFormat(locale, { style: 'percent', minimumFractionDigits: 1 }).format(num);
+  const formatNumber = (num: number) => new Intl.NumberFormat(locale).format(Math.round(num));
+  const formatDecimal = (num: number) => new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+  const formatPercent = (num: number) => new Intl.NumberFormat(locale, { style: 'percent', minimumFractionDigits: 1 }).format(num);
 
   const toggleLanguage = () => setLanguage((current) => (current === 'en' ? 'zh' : 'en'));
+  const overallGainMetrics: Array<[string, number]> = [
+    [t.totalVms, pctVmsSaved],
+    [t.totalCpu, pctCoresSaved],
+    [t.totalRam, pctRamSaved],
+    [t.totalStorage, pctStorageSaved]
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50 p-2 md:p-4 font-sans text-slate-800 flex flex-col items-center">
@@ -373,12 +428,7 @@ export default function SRFCalculator() {
                 <div className="mt-4 pt-3 border-t border-emerald-100">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center mb-3">{t.overallGain}</h3>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {[
-                      [t.totalVms, pctVmsSaved],
-                      [t.totalCpu, pctCoresSaved],
-                      [t.totalRam, pctRamSaved],
-                      [t.totalStorage, pctStorageSaved]
-                    ].map(([label, value]) => (
+                    {overallGainMetrics.map(([label, value]) => (
                       <div key={label} className="flex flex-col items-center">
                         <div className="w-11 h-11 rounded-full border-[3px] border-emerald-500 flex items-center justify-center bg-emerald-50 mb-1">
                           <span className="text-xs font-bold text-emerald-700">{formatPercent(value)}</span>
