@@ -211,26 +211,26 @@ export default function SRFCalculator() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 p-2 md:p-4 font-sans text-slate-800 flex flex-col items-center">
-      <div className="w-full max-w-5xl space-y-3">
-        <div className="flex flex-col gap-2 border-b border-slate-200 pb-2 md:flex-row md:items-end md:justify-between">
+    <div className="min-h-screen bg-zinc-100 px-3 py-4 font-sans text-zinc-900 md:px-5">
+      <div className="mx-auto w-full max-w-6xl space-y-4">
+        <div className="flex flex-col gap-3 border-b border-zinc-300 pb-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">{t.title}</h1>
-            <p className="text-slate-500 text-xs mt-0.5">{t.subtitle}</p>
+            <h1 className="text-xl font-semibold text-zinc-950">{t.title}</h1>
+            <p className="mt-1 text-sm text-zinc-600">{t.subtitle}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex space-x-2 bg-slate-200/60 p-1 rounded-lg">
+            <div className="flex border border-zinc-300 bg-white">
               <button
                 type="button"
                 onClick={() => setActiveTab('macro')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${activeTab === 'macro' ? 'bg-white shadow-sm text-emerald-700' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`border-r border-zinc-300 px-3 py-2 text-xs font-semibold ${activeTab === 'macro' ? 'bg-zinc-900 text-white' : 'text-zinc-700 hover:bg-zinc-100'}`}
               >
                 {t.macroTab}
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('micro')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${activeTab === 'micro' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`px-3 py-2 text-xs font-semibold ${activeTab === 'micro' ? 'bg-zinc-900 text-white' : 'text-zinc-700 hover:bg-zinc-100'}`}
               >
                 {t.microTab}
               </button>
@@ -238,209 +238,201 @@ export default function SRFCalculator() {
             <button
               type="button"
               onClick={toggleLanguage}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50"
+              className="border border-zinc-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-100"
             >
               {t.language}
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-          <div className="lg:col-span-4 space-y-3">
-            <div className="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 h-full">
-              <h2 className="text-sm font-bold text-slate-800 mb-3 flex items-center border-b pb-1.5">
-                <svg className="w-4 h-4 mr-1.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                {t.topologyTitle}
-              </h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <aside className="lg:col-span-4">
+            <section className="h-full border border-zinc-300 bg-white p-4">
+              <h2 className="mb-4 border-b border-zinc-200 pb-2 text-sm font-semibold text-zinc-900">{t.topologyTitle}</h2>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <label className="text-xs font-semibold text-slate-600">{t.ranNodes}</label>
-                    <span className="text-xs font-bold bg-slate-100 px-1.5 rounded text-slate-700">{formatNumber(ranNodes)}</span>
+                  <div className="mb-1 flex justify-between">
+                    <label className="text-xs font-medium text-zinc-600">{t.ranNodes}</label>
+                    <span className="text-xs font-semibold text-zinc-900">{formatNumber(ranNodes)}</span>
                   </div>
-                  <input type="range" min="10000" max="500000" step="5000" value={ranNodes} onChange={(e) => setRanNodes(Number(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-600" />
+                  <input type="range" min="10000" max="500000" step="5000" value={ranNodes} onChange={(e) => setRanNodes(Number(e.target.value))} className="h-1.5 w-full cursor-pointer accent-zinc-800" />
                 </div>
 
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <label className="text-xs font-semibold text-slate-600">{t.amfInstances}</label>
-                    <span className="text-xs font-bold bg-slate-100 px-1.5 rounded text-slate-700">{amfInstances}</span>
+                  <div className="mb-1 flex justify-between">
+                    <label className="text-xs font-medium text-zinc-600">{t.amfInstances}</label>
+                    <span className="text-xs font-semibold text-zinc-900">{amfInstances}</span>
                   </div>
-                  <input type="range" min="2" max="32" step="1" value={amfInstances} onChange={(e) => setAmfInstances(Number(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-600" />
+                  <input type="range" min="2" max="32" step="1" value={amfInstances} onChange={(e) => setAmfInstances(Number(e.target.value))} className="h-1.5 w-full cursor-pointer accent-zinc-800" />
                 </div>
 
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <label className="text-xs font-semibold text-indigo-600">{t.srfInstances}</label>
-                    <span className="text-xs font-bold bg-indigo-50 px-1.5 rounded text-indigo-700">{srfInstances}</span>
+                  <div className="mb-1 flex justify-between">
+                    <label className="text-xs font-medium text-zinc-600">{t.srfInstances}</label>
+                    <span className="text-xs font-semibold text-zinc-900">{srfInstances}</span>
                   </div>
-                  <input type="range" min="1" max="16" step="1" value={srfInstances} onChange={(e) => setSrfInstances(Number(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+                  <input type="range" min="1" max="16" step="1" value={srfInstances} onChange={(e) => setSrfInstances(Number(e.target.value))} className="h-1.5 w-full cursor-pointer accent-zinc-800" />
                 </div>
               </div>
 
-              <div className="mt-4 p-2 bg-slate-50 border border-slate-100 rounded-lg text-center">
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mb-1">{t.totalLinkReduction}</p>
-                <p className={`text-lg font-bold ${isPositiveGain ? 'text-green-600' : 'text-red-500'}`}>
+              <div className="mt-5 border border-zinc-300 bg-zinc-50 p-3">
+                <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.totalLinkReduction}</p>
+                <p className={`text-2xl font-semibold ${isPositiveGain ? 'text-zinc-950' : 'text-red-700'}`}>
                   {isPositiveGain ? '-' : '+'}{formatNumber(Math.abs(linksEliminated))}
                 </p>
-                <p className="text-[10px] text-slate-400 mt-0.5">{t.fromTo(formatNumber(links5G), formatNumber(links6G))}</p>
+                <p className="mt-1 text-xs text-zinc-500">{t.fromTo(formatNumber(links5G), formatNumber(links6G))}</p>
               </div>
-            </div>
-          </div>
+            </section>
+          </aside>
 
-          <div className="lg:col-span-8">
+          <main className="lg:col-span-8">
             {activeTab === 'micro' && (
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-indigo-100 h-full flex flex-col animate-in fade-in duration-300">
-                <div className="mb-3 border-b border-slate-100 pb-2">
-                  <h2 className="text-sm font-bold text-indigo-800 flex items-center">
-                    <svg className="w-4 h-4 mr-1.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
-                    {t.microTitle}
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{t.microDescription}</p>
+              <section className="flex h-full flex-col border border-zinc-300 bg-white p-4">
+                <div className="mb-4 border-b border-zinc-200 pb-3">
+                  <h2 className="text-sm font-semibold text-zinc-950">{t.microTitle}</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-zinc-600">{t.microDescription}</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="bg-indigo-50/50 p-3 rounded-lg border border-indigo-100/50">
-                    <div className="flex justify-between mb-1.5">
-                      <label className="text-xs font-semibold text-indigo-900">{t.ramPerLink} (C<sub>link</sub>)</label>
-                      <span className="text-xs font-bold text-indigo-700">{formatNumber(ramCostKb)} {t.kb}</span>
+                <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="border border-zinc-300 bg-zinc-50 p-3">
+                    <div className="mb-1.5 flex justify-between gap-3">
+                      <label className="text-xs font-medium text-zinc-700">{t.ramPerLink} (C<sub>link</sub>)</label>
+                      <span className="text-xs font-semibold text-zinc-900">{formatNumber(ramCostKb)} {t.kb}</span>
                     </div>
-                    <input type="range" min="1" max="2048" step="1" value={ramCostKb} onChange={(e) => setRamCostKb(Number(e.target.value))} className="w-full h-1 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+                    <input type="range" min="1" max="2048" step="1" value={ramCostKb} onChange={(e) => setRamCostKb(Number(e.target.value))} className="h-1.5 w-full cursor-pointer accent-zinc-800" />
                   </div>
 
-                  <div className="bg-indigo-50/50 p-3 rounded-lg border border-indigo-100/50">
-                    <div className="flex justify-between mb-1.5">
-                      <label className="text-xs font-semibold text-indigo-900">{t.cpuPerLink} (C<sub>link</sub>)</label>
-                      <span className="text-xs font-bold text-indigo-700">{cpuCostCores.toFixed(4)} {t.cores}</span>
+                  <div className="border border-zinc-300 bg-zinc-50 p-3">
+                    <div className="mb-1.5 flex justify-between gap-3">
+                      <label className="text-xs font-medium text-zinc-700">{t.cpuPerLink} (C<sub>link</sub>)</label>
+                      <span className="text-xs font-semibold text-zinc-900">{cpuCostCores.toFixed(4)} {t.cores}</span>
                     </div>
-                    <input type="range" min="0.0001" max="0.0200" step="0.0001" value={cpuCostCores} onChange={(e) => setCpuCostCores(Number(e.target.value))} className="w-full h-1 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+                    <input type="range" min="0.0001" max="0.0200" step="0.0001" value={cpuCostCores} onChange={(e) => setCpuCostCores(Number(e.target.value))} className="h-1.5 w-full cursor-pointer accent-zinc-800" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-auto">
-                  <div className="bg-white p-4 rounded-xl border-2 border-indigo-50 shadow-sm flex flex-col justify-center items-center text-center">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t.ramSaved}</p>
-                    <h3 className={`text-3xl font-extrabold tracking-tight ${isPositiveGain ? 'text-indigo-600' : 'text-red-500'}`}>
-                      {isPositiveGain ? '' : '-'}{formatDecimal(Math.abs(ramSavedGB))} <span className="text-sm text-slate-400 font-semibold tracking-normal">{t.gb}</span>
+                <div className="mt-auto grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <div className="border border-zinc-300 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.ramSaved}</p>
+                    <h3 className={`text-2xl font-semibold ${isPositiveGain ? 'text-zinc-950' : 'text-red-700'}`}>
+                      {isPositiveGain ? '' : '-'}{formatDecimal(Math.abs(ramSavedGB))} <span className="text-sm font-medium text-zinc-500">{t.gb}</span>
                     </h3>
                   </div>
 
-                  <div className="bg-white p-4 rounded-xl border-2 border-indigo-50 shadow-sm flex flex-col justify-center items-center text-center">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t.cpuSaved}</p>
-                    <h3 className={`text-3xl font-extrabold tracking-tight ${isPositiveGain ? 'text-indigo-600' : 'text-red-500'}`}>
-                      {isPositiveGain ? '' : '-'}{formatDecimal(Math.abs(cpuSavedCores))} <span className="text-sm text-slate-400 font-semibold tracking-normal">{t.cores}</span>
+                  <div className="border border-zinc-300 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.cpuSaved}</p>
+                    <h3 className={`text-2xl font-semibold ${isPositiveGain ? 'text-zinc-950' : 'text-red-700'}`}>
+                      {isPositiveGain ? '' : '-'}{formatDecimal(Math.abs(cpuSavedCores))} <span className="text-sm font-medium text-zinc-500">{t.cores}</span>
                     </h3>
                   </div>
 
-                  <div className="bg-white p-4 rounded-xl border-2 border-indigo-50 shadow-sm flex flex-col justify-center items-center text-center">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t.pbuSaved}</p>
-                    <h3 className={`text-3xl font-extrabold tracking-tight ${isPositiveGain ? 'text-indigo-600' : 'text-red-500'}`}>
-                      {isPositiveGain ? '' : '-'}{formatNumber(pbuCA1VmsEliminated)} <span className="text-sm text-slate-400 font-semibold tracking-normal">{t.vms}</span>
+                  <div className="border border-zinc-300 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.pbuSaved}</p>
+                    <h3 className={`text-2xl font-semibold ${isPositiveGain ? 'text-zinc-950' : 'text-red-700'}`}>
+                      {isPositiveGain ? '' : '-'}{formatNumber(pbuCA1VmsEliminated)} <span className="text-sm font-medium text-zinc-500">{t.vms}</span>
                     </h3>
-                    <p className="text-[10px] text-slate-400 mt-1">{t.pbuSpec}</p>
+                    <p className="mt-1 text-xs text-zinc-500">{t.pbuSpec}</p>
                   </div>
                 </div>
-              </div>
+              </section>
             )}
 
             {activeTab === 'macro' && (
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-emerald-100 h-full flex flex-col animate-in fade-in duration-300">
-                <div className="mb-3 border-b border-slate-100 pb-2">
-                  <h2 className="text-sm font-bold text-emerald-800 flex items-center">
-                    <svg className="w-4 h-4 mr-1.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
-                    {t.macroTitle}
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{t.macroDescription}</p>
+              <section className="flex h-full flex-col border border-zinc-300 bg-white p-4">
+                <div className="mb-4 border-b border-zinc-200 pb-3">
+                  <h2 className="text-sm font-semibold text-zinc-950">{t.macroTitle}</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-zinc-600">{t.macroDescription}</p>
                 </div>
 
-                <div className="bg-emerald-50/50 p-4 rounded-lg border border-emerald-100/50 mb-4">
-                  <div className="flex justify-between items-end mb-2">
+                <div className="mb-4 border border-zinc-300 bg-zinc-50 p-4">
+                  <div className="mb-2 flex items-end justify-between gap-3">
                     <div>
-                      <label className="text-xs font-bold text-emerald-900 block mb-0.5">{t.currentFootprint} (V<sub>5G</sub>)</label>
-                      <p className="text-[10px] text-emerald-600">{t.currentFootprintHint}</p>
+                      <label className="mb-0.5 block text-xs font-semibold text-zinc-800">{t.currentFootprint} (V<sub>5G</sub>)</label>
+                      <p className="text-xs text-zinc-600">{t.currentFootprintHint}</p>
                     </div>
-                    <span className="text-lg font-black text-emerald-700 bg-white px-2 py-0.5 rounded shadow-sm border border-emerald-100">{currentVms}</span>
+                    <span className="border border-zinc-300 bg-white px-2 py-1 text-lg font-semibold text-zinc-950">{currentVms}</span>
                   </div>
-                  <div className="rounded-md bg-white/70 border border-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700">
+                  <div className="border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700">
                     {t.footprintFormula(amfInstances, pbuCA1VmsPerAmf)}
                   </div>
 
                   <div className="mt-3">
-                    <div className="flex justify-between mb-1.5">
-                      <label className="text-xs font-semibold text-emerald-900">{t.pbuPerAmf}</label>
-                      <span className="text-xs font-bold text-emerald-700">{pbuCA1VmsPerAmf}</span>
+                    <div className="mb-1.5 flex justify-between">
+                      <label className="text-xs font-medium text-zinc-700">{t.pbuPerAmf}</label>
+                      <span className="text-xs font-semibold text-zinc-900">{pbuCA1VmsPerAmf}</span>
                     </div>
-                    <input type="range" min="1" max="64" step="1" value={pbuCA1VmsPerAmf} onChange={(e) => setPbuCA1VmsPerAmf(Number(e.target.value))} className="w-full h-1.5 bg-emerald-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" />
+                    <input type="range" min="1" max="64" step="1" value={pbuCA1VmsPerAmf} onChange={(e) => setPbuCA1VmsPerAmf(Number(e.target.value))} className="h-1.5 w-full cursor-pointer accent-zinc-800" />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-emerald-100/70">
+                  <div className="mt-3 grid grid-cols-1 gap-2 border-t border-zinc-300 pt-3 sm:grid-cols-3">
                     <div>
-                      <label className="text-[9px] font-bold text-emerald-800 uppercase tracking-wide">{t.coresPerVm}</label>
-                      <input type="number" value={vmCores} onChange={(e) => setVmCores(Number(e.target.value))} className="w-full text-xs font-bold text-emerald-900 bg-white border border-emerald-200 rounded px-2 py-1 mt-0.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                      <label className="text-xs font-medium text-zinc-600">{t.coresPerVm}</label>
+                      <input type="number" value={vmCores} onChange={(e) => setVmCores(Number(e.target.value))} className="mt-1 w-full border border-zinc-300 bg-white px-2 py-1 text-sm font-medium text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-700" />
                     </div>
                     <div>
-                      <label className="text-[9px] font-bold text-emerald-800 uppercase tracking-wide">{t.ramPerVm}</label>
-                      <input type="number" value={vmRam} onChange={(e) => setVmRam(Number(e.target.value))} className="w-full text-xs font-bold text-emerald-900 bg-white border border-emerald-200 rounded px-2 py-1 mt-0.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                      <label className="text-xs font-medium text-zinc-600">{t.ramPerVm}</label>
+                      <input type="number" value={vmRam} onChange={(e) => setVmRam(Number(e.target.value))} className="mt-1 w-full border border-zinc-300 bg-white px-2 py-1 text-sm font-medium text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-700" />
                     </div>
                     <div>
-                      <label className="text-[9px] font-bold text-emerald-800 uppercase tracking-wide">{t.storagePerVm}</label>
-                      <input type="number" value={vmStorage} onChange={(e) => setVmStorage(Number(e.target.value))} className="w-full text-xs font-bold text-emerald-900 bg-white border border-emerald-200 rounded px-2 py-1 mt-0.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                      <label className="text-xs font-medium text-zinc-600">{t.storagePerVm}</label>
+                      <input type="number" value={vmStorage} onChange={(e) => setVmStorage(Number(e.target.value))} className="mt-1 w-full border border-zinc-300 bg-white px-2 py-1 text-sm font-medium text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-700" />
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mt-auto">
-                  <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-center flex flex-col justify-center">
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-1">{t.linkReductionRatio} (ρ)</p>
-                    <h3 className="text-xl font-bold text-slate-800">{formatPercent(reductionRatio)}</h3>
+                <div className="mt-auto grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="border border-zinc-300 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.linkReductionRatio} (ρ)</p>
+                    <h3 className="text-2xl font-semibold text-zinc-950">{formatPercent(reductionRatio)}</h3>
                   </div>
 
-                  <div className="bg-emerald-600 p-3 rounded-lg shadow-sm border border-emerald-700 text-center flex flex-col justify-center relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-1 opacity-20"><svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg></div>
-                    <p className="text-[10px] font-bold text-emerald-100 uppercase tracking-wide mb-1 relative z-10">{t.totalVmsSaved}</p>
-                    <h3 className="text-3xl font-black text-white relative z-10">{isPositiveGain ? vmsSaved : 0}</h3>
+                  <div className="border border-zinc-900 bg-zinc-900 p-4 text-white">
+                    <p className="mb-1 text-xs font-semibold uppercase text-zinc-300">{t.totalVmsSaved}</p>
+                    <h3 className="text-2xl font-semibold">{isPositiveGain ? vmsSaved : 0}</h3>
                   </div>
 
-                  <div className="bg-white p-3 rounded-lg border-2 border-emerald-100 text-center flex flex-col justify-center">
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-1">{t.targetFootprint}</p>
-                    <h3 className="text-xl font-bold text-emerald-600">{isPositiveGain ? newVmFootprint : currentVms} <span className="text-xs text-slate-400 font-semibold tracking-normal">{t.vms}</span></h3>
+                  <div className="border border-zinc-300 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.targetFootprint}</p>
+                    <h3 className="text-2xl font-semibold text-zinc-950">{isPositiveGain ? newVmFootprint : currentVms} <span className="text-sm font-medium text-zinc-500">{t.vms}</span></h3>
                   </div>
                 </div>
 
-                <div className="mt-3 bg-emerald-50/40 border border-emerald-100 rounded-lg p-2.5 flex justify-around text-center items-center">
+                <div className="mt-3 grid grid-cols-1 border border-zinc-300 bg-zinc-50 sm:grid-cols-3">
                   <div>
-                    <p className="text-[9px] font-bold text-emerald-600/80 uppercase tracking-wider mb-0.5">{t.coresFreed}</p>
-                    <p className="text-sm font-black text-emerald-700">-{formatNumber(isPositiveGain ? macroCoresSaved : 0)}</p>
+                    <div className="border-b border-zinc-300 p-3 sm:border-b-0 sm:border-r">
+                      <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.coresFreed}</p>
+                      <p className="text-sm font-semibold text-zinc-900">-{formatNumber(isPositiveGain ? macroCoresSaved : 0)}</p>
+                    </div>
                   </div>
-                  <div className="w-px h-6 bg-emerald-200"></div>
                   <div>
-                    <p className="text-[9px] font-bold text-emerald-600/80 uppercase tracking-wider mb-0.5">{t.ramFreed}</p>
-                    <p className="text-sm font-black text-emerald-700">-{formatNumber(isPositiveGain ? macroRamSaved : 0)} <span className="text-[10px] font-semibold text-emerald-600/60">{t.gb}</span></p>
+                    <div className="border-b border-zinc-300 p-3 sm:border-b-0 sm:border-r">
+                      <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.ramFreed}</p>
+                      <p className="text-sm font-semibold text-zinc-900">-{formatNumber(isPositiveGain ? macroRamSaved : 0)} <span className="text-xs font-medium text-zinc-500">{t.gb}</span></p>
+                    </div>
                   </div>
-                  <div className="w-px h-6 bg-emerald-200"></div>
                   <div>
-                    <p className="text-[9px] font-bold text-emerald-600/80 uppercase tracking-wider mb-0.5">{t.storageFreed}</p>
-                    <p className="text-sm font-black text-emerald-700">-{formatNumber(isPositiveGain ? macroStorageSaved : 0)} <span className="text-[10px] font-semibold text-emerald-600/60">{t.gb}</span></p>
+                    <div className="p-3">
+                      <p className="mb-1 text-xs font-semibold uppercase text-zinc-500">{t.storageFreed}</p>
+                      <p className="text-sm font-semibold text-zinc-900">-{formatNumber(isPositiveGain ? macroStorageSaved : 0)} <span className="text-xs font-medium text-zinc-500">{t.gb}</span></p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-emerald-100">
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center mb-3">{t.overallGain}</h3>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="mt-4 border-t border-zinc-200 pt-3">
+                  <h3 className="mb-3 text-xs font-semibold uppercase text-zinc-500">{t.overallGain}</h3>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {overallGainMetrics.map(([label, value]) => (
-                      <div key={label} className="flex flex-col items-center">
-                        <div className="w-11 h-11 rounded-full border-[3px] border-emerald-500 flex items-center justify-center bg-emerald-50 mb-1">
-                          <span className="text-xs font-bold text-emerald-700">{formatPercent(value)}</span>
-                        </div>
-                        <span className="text-[9px] font-semibold text-slate-600 text-center">{label}</span>
+                      <div key={label} className="border border-zinc-300 p-3">
+                        <p className="text-lg font-semibold text-zinc-950">{formatPercent(value)}</p>
+                        <p className="mt-1 text-xs font-medium text-zinc-600">{label}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
+              </section>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>
