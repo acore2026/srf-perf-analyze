@@ -27,16 +27,17 @@ This changes the 5G AMF model where RAN nodes are fully meshed with every AMF in
 
 ## Baseline Assumptions
 
-| Item | Value |
-| --- | ---: |
-| RAN nodes, `M` | 150,000 |
-| AMF instances, `N` | 6 |
-| SRF instances, `K` | 2 |
-| PBU_C-A1 VMs per AMF | 12 |
-| Pool PBU_C-A1 VMs, `V_5G` | 72 |
-| PBU_C-A1 VM resource | 12 core / 32 GB RAM / 38 GB storage |
-| PBU_C2-A VM resource | 12 core / 44 GB RAM / 38 GB storage |
-| PBU_C2-A dynamic spec per VM | 447 |
+
+| Item                         |                               Value |
+| ---------------------------- | ----------------------------------: |
+| RAN nodes,`M`                |                             150,000 |
+| AMF instances,`N`            |                                   6 |
+| SRF instances,`K`            |                                   2 |
+| PBU_C-A1 VMs per AMF         |                                  12 |
+| Pool PBU_C-A1 VMs,`V_5G`     |                                  72 |
+| PBU_C-A1 VM resource         | 12 core / 32 GB RAM / 38 GB storage |
+| PBU_C2-A VM resource         | 12 core / 44 GB RAM / 38 GB storage |
+| PBU_C2-A dynamic spec per VM |                                 447 |
 
 The full AMF pool contains:
 
@@ -74,11 +75,12 @@ $$
 
 Released resources:
 
-| Resource | Calculation | Released |
-| --- | ---: | ---: |
-| CPU | $47 \times 12$ core | 564 core |
-| RAM | $47 \times 32$ GB | 1,504 GB |
-| Storage | $47 \times 38$ GB | 1,786 GB |
+
+| Resource |         Calculation | Released |
+| -------- | ------------------: | -------: |
+| CPU      | $47 \times 12$ core | 564 core |
+| RAM      |   $47 \times 32$ GB | 1,504 GB |
+| Storage  |   $47 \times 38$ GB | 1,786 GB |
 
 ## Why 14.8% Understates the Performance Gain
 
@@ -90,14 +92,15 @@ $$
 
 This denominator includes VM types that are mostly fixed overhead and do not need to scale linearly when service volume increases:
 
-| Fixed-overhead VM type | Pool VMs | Pool CPU | Pool RAM | Pool Storage |
-| --- | ---: | ---: | ---: | ---: |
-| `OMU_ARM` | 12 | 144 core | 816 GB | 4,200 GB |
-| `PBU_C-A3_ARM` | 12 | 96 core | 216 GB | 336 GB |
-| `OMU_L1_ARM` | 12 | 48 core | 312 GB | 480 GB |
-| `PBU_L_ARM` | 12 | 48 core | 288 GB | 384 GB |
-| `PBU_L-M_ARM` | 12 | 48 core | 264 GB | 312 GB |
-| **Fixed-overhead total** | **60** | **384 core** | **1,896 GB** | **5,712 GB** |
+
+| Fixed-overhead VM type   | Pool VMs |     Pool CPU |     Pool RAM | Pool Storage |
+| ------------------------ | -------: | -----------: | -----------: | -----------: |
+| `OMU_ARM`                |       12 |     144 core |       816 GB |     4,200 GB |
+| `PBU_C-A3_ARM`           |       12 |      96 core |       216 GB |       336 GB |
+| `OMU_L1_ARM`             |       12 |      48 core |       312 GB |       480 GB |
+| `PBU_L_ARM`              |       12 |      48 core |       288 GB |       384 GB |
+| `PBU_L-M_ARM`            |       12 |      48 core |       264 GB |       312 GB |
+| **Fixed-overhead total** |   **60** | **384 core** | **1,896 GB** | **5,712 GB** |
 
 So the service-volume-sensitive baseline should exclude those fixed VM types:
 
@@ -175,11 +178,12 @@ $$
 
 Maximum additional VMs by each resource:
 
-| Constraint | Calculation | Max new PBU_C-A VMs |
-| --- | ---: | ---: |
-| CPU | $\left\lfloor 564 / 12 \right\rfloor$ | 47 |
-| RAM | $\left\lfloor 1{,}504 / 44 \right\rfloor$ | 34 |
-| Storage | $\left\lfloor 1{,}786 / 38 \right\rfloor$ | 47 |
+
+| Constraint |                               Calculation | Max new PBU_C-A VMs |
+| ---------- | ----------------------------------------: | ------------------: |
+| CPU        |     $\left\lfloor 564 / 12 \right\rfloor$ |                  47 |
+| RAM        | $\left\lfloor 1{,}504 / 44 \right\rfloor$ |                  34 |
+| Storage    | $\left\lfloor 1{,}786 / 38 \right\rfloor$ |                  47 |
 
 RAM is the binding constraint, so the released PBU_C-A1 resources can support **34 additional PBU_C-A VMs** without adding extra memory.
 
