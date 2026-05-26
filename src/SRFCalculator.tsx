@@ -54,15 +54,15 @@ const copy: Record<Language, Translation> = {
     language: '中文',
     title: '6G SRF Architecture ROI Dashboard',
     subtitle: 'Evaluate Core Network hardware savings using Micro and Macro methodologies.',
-    microTab: 'Method 1: Micro (Link Resource)',
-    macroTab: 'Method 2: Macro (PBU_C-A1 Proportional)',
+    microTab: 'Method 2: Micro (Link Resource)',
+    macroTab: 'Method 1: Macro (PBU_C-A1 Proportional)',
     topologyTitle: 'Shared Topology Settings',
     ranNodes: 'RAN Nodes (M)',
     amfInstances: 'AMF Instances (N)',
     srfInstances: 'SRF Instances (K)',
     totalLinkReduction: 'Total Link Reduction',
     fromTo: (from, to) => `From ${from} to ${to}`,
-    microTitle: 'Method 1: Micro (Link Resource Overhead)',
+    microTitle: 'Method 2: Micro (Link Resource Overhead)',
     microDescription: 'Calculates absolute hardware savings by isolating the CPU/RAM cost of maintaining individual SCTP/NGAP socket states.',
     ramPerLink: 'RAM per Link',
     cpuPerLink: 'CPU per Link',
@@ -70,7 +70,7 @@ const copy: Record<Language, Translation> = {
     cpuSaved: 'CPU Cores Saved',
     pbuSaved: 'PBU_C-A1 VM Eliminated',
     pbuSpec: '12 cores / 32 GB per VM',
-    macroTitle: 'Method 2: Macro (PBU_C-A1 Proportional Reduction)',
+    macroTitle: 'Method 1: Macro (PBU_C-A1 Proportional Reduction)',
     macroDescription: 'Calculates server hardware reduction by assuming PBU_C-A1 requirements scale linearly with connection fan-out reduction.',
     currentFootprint: 'Current PBU_C-A1 Server Footprint',
     currentFootprintHint: 'Calculated as AMF instances × PBU_C-A1 VMs per AMF.',
@@ -99,15 +99,15 @@ const copy: Record<Language, Translation> = {
     language: 'English',
     title: '6G SRF 架构 ROI 仪表盘',
     subtitle: '基于微观链路资源和宏观 PBU_C-A1 比例两种方法评估核心网硬件节省。',
-    microTab: '方法一：微观链路资源',
-    macroTab: '方法二：宏观 PBU_C-A1 比例',
+    microTab: '方法二：微观链路资源',
+    macroTab: '方法一：宏观 PBU_C-A1 比例',
     topologyTitle: '共享拓扑设置',
     ranNodes: 'RAN 节点数 (M)',
     amfInstances: 'AMF 实例数 (N)',
     srfInstances: 'SRF 实例数 (K)',
     totalLinkReduction: '总链路减少量',
     fromTo: (from, to) => `从 ${from} 降至 ${to}`,
-    microTitle: '方法一：微观链路资源开销',
+    microTitle: '方法二：微观链路资源开销',
     microDescription: '通过单独计算维持每条 SCTP/NGAP socket 状态所需的 CPU/RAM 成本，得出绝对硬件节省。',
     ramPerLink: '每条链路 RAM',
     cpuPerLink: '每条链路 CPU',
@@ -115,7 +115,7 @@ const copy: Record<Language, Translation> = {
     cpuSaved: '节省 CPU 核数',
     pbuSaved: '减少 PBU_C-A1 VM',
     pbuSpec: '每个 VM 为 12 核 / 32 GB',
-    macroTitle: '方法二：宏观 PBU_C-A1 比例缩减',
+    macroTitle: '方法一：宏观 PBU_C-A1 比例缩减',
     macroDescription: '假设 PBU_C-A1 需求随连接扇出减少比例线性缩减，从而计算服务器硬件减少量。',
     currentFootprint: '当前 PBU_C-A1 服务器规模',
     currentFootprintHint: '按 AMF 实例数 × 每 AMF 的 PBU_C-A1 VM 数量计算。',
@@ -153,7 +153,7 @@ export default function SRFCalculator() {
   const [srfInstances, setSrfInstances] = useState(2);
 
   // Tab State
-  const [activeTab, setActiveTab] = useState<ActiveTab>('micro');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('macro');
 
   // Micro-Level State
   const [ramCostKb, setRamCostKb] = useState(156);
@@ -222,17 +222,17 @@ export default function SRFCalculator() {
             <div className="flex space-x-2 bg-slate-200/60 p-1 rounded-lg">
               <button
                 type="button"
-                onClick={() => setActiveTab('micro')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${activeTab === 'micro' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                {t.microTab}
-              </button>
-              <button
-                type="button"
                 onClick={() => setActiveTab('macro')}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${activeTab === 'macro' ? 'bg-white shadow-sm text-emerald-700' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 {t.macroTab}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('micro')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${activeTab === 'micro' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                {t.microTab}
               </button>
             </div>
             <button
