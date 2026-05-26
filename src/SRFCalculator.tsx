@@ -39,14 +39,13 @@ type Translation = {
   ramFreed: string;
   storageFreed: string;
   overallGain: string;
-  fullPoolVmGain: string;
   capacityVmGain: string;
   cpuHeadroom: string;
   ramHeadroom: string;
   storageHeadroom: string;
   conservativeGain: string;
   fixedOverheadTitle: string;
-  fixedOverheadDescription: (fixedVms: string, totalVms: string) => string;
+  fixedOverheadDescription: (fixedVms: string) => string;
   fixedOverheadTypes: string;
   ratioDetail: (saved: string, total: string) => string;
   conservativeDetail: string;
@@ -97,14 +96,13 @@ const copy: Record<Language, Translation> = {
     ramFreed: 'RAM Freed',
     storageFreed: 'Storage Freed',
     overallGain: 'Overall AMF Pool Performance Gain',
-    fullPoolVmGain: 'Whole-Pool VM Gain',
     capacityVmGain: 'Capacity-Relevant VM Gain',
     cpuHeadroom: 'CPU Headroom',
     ramHeadroom: 'RAM Headroom',
     storageHeadroom: 'Storage Headroom',
     conservativeGain: 'Conservative Capacity Gain',
     fixedOverheadTitle: 'Fixed-overhead VMs excluded from performance denominator',
-    fixedOverheadDescription: (fixedVms, totalVms) => `${fixedVms} fixed-overhead VMs are excluded from the ${totalVms}-VM pool because they do not need to scale linearly with service volume.`,
+    fixedOverheadDescription: (fixedVms) => `${fixedVms} fixed-overhead VMs are excluded because they do not need to scale linearly with service volume.`,
     fixedOverheadTypes: 'OMU_ARM, PBU_C-A3_ARM, OMU_L1_ARM, PBU_L_ARM, PBU_L-M_ARM',
     ratioDetail: (saved, total) => `${saved} / ${total} VMs`,
     conservativeDetail: 'Bounded by the lowest reusable resource headroom.',
@@ -153,14 +151,13 @@ const copy: Record<Language, Translation> = {
     ramFreed: '释放 RAM',
     storageFreed: '释放存储',
     overallGain: 'AMF 池整体性能收益',
-    fullPoolVmGain: '全池 VM 收益',
     capacityVmGain: '容量相关 VM 收益',
     cpuHeadroom: 'CPU 余量',
     ramHeadroom: '内存余量',
     storageHeadroom: '存储余量',
     conservativeGain: '保守容量收益',
     fixedOverheadTitle: '性能分母中排除固定开销 VM',
-    fixedOverheadDescription: (fixedVms, totalVms) => `从 ${totalVms} 个 VM 中排除 ${fixedVms} 个固定开销 VM，因为这些 VM 不随业务量线性扩容。`,
+    fixedOverheadDescription: (fixedVms) => `排除 ${fixedVms} 个固定开销 VM，因为这些 VM 不随业务量线性扩容。`,
     fixedOverheadTypes: 'OMU_ARM、PBU_C-A3_ARM、OMU_L1_ARM、PBU_L_ARM、PBU_L-M_ARM',
     ratioDetail: (saved, total) => `${saved} / ${total} VM`,
     conservativeDetail: '取可复用资源余量中的最小值。',
@@ -243,7 +240,6 @@ export default function SRFCalculator() {
   const capacityRelevantRam = Math.max(poolTotalRam - fixedOverheadRam, 0);
   const capacityRelevantStorage = Math.max(poolTotalStorage - fixedOverheadStorage, 0);
 
-  const wholePoolVmGain = poolTotalVms > 0 && isPositiveGain ? vmsSaved / poolTotalVms : 0;
   const capacityRelevantVmGain = capacityRelevantVms > 0 && isPositiveGain ? vmsSaved / capacityRelevantVms : 0;
   const cpuHeadroomGain = capacityRelevantCores > 0 && isPositiveGain ? macroCoresSaved / capacityRelevantCores : 0;
   const ramHeadroomGain = capacityRelevantRam > 0 && isPositiveGain ? macroRamSaved / capacityRelevantRam : 0;
@@ -256,7 +252,6 @@ export default function SRFCalculator() {
 
   const toggleLanguage = () => setLanguage((current) => (current === 'en' ? 'zh' : 'en'));
   const overallGainMetrics: Array<[string, number, string]> = [
-    [t.fullPoolVmGain, wholePoolVmGain, t.ratioDetail(formatNumber(vmsSaved), formatNumber(poolTotalVms))],
     [t.capacityVmGain, capacityRelevantVmGain, t.ratioDetail(formatNumber(vmsSaved), formatNumber(capacityRelevantVms))],
     [t.cpuHeadroom, cpuHeadroomGain, `${formatNumber(macroCoresSaved)} / ${formatNumber(capacityRelevantCores)} ${t.cores}`],
     [t.ramHeadroom, ramHeadroomGain, `${formatNumber(macroRamSaved)} / ${formatNumber(capacityRelevantRam)} ${t.gb}`],
@@ -478,7 +473,7 @@ export default function SRFCalculator() {
                   <div className="mb-3 border border-zinc-300 bg-zinc-50 p-3">
                     <p className="text-xs font-semibold text-zinc-800">{t.fixedOverheadTitle}</p>
                     <p className="mt-1 text-xs leading-relaxed text-zinc-600">
-                      {t.fixedOverheadDescription(formatNumber(fixedOverheadVms), formatNumber(poolTotalVms))}
+                      {t.fixedOverheadDescription(formatNumber(fixedOverheadVms))}
                     </p>
                     <p className="mt-2 text-xs text-zinc-600">{t.fixedOverheadTypes}</p>
                   </div>
