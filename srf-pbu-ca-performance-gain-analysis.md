@@ -2,14 +2,22 @@
 
 ## Executive Summary
 
-Yes. If the SRF solution removes a large part of the AMF-side PBU_C-A1 footprint, and the released VM resources are reused to scale out PBU_C-A processing VMs, the AMF pool capacity should increase.
+Yes. If the SRF solution removes a large part of the AMF-side PBU_C-A1 footprint, and the released VM resources are reused by traffic-sensitive AMF components, the AMF pool capacity should increase.
 
-Using the assumptions from `part-of-my-analysis.md`, the SRF topology can conservatively release **47 PBU_C-A1 VMs**. Reusing those resources to add `PBU_C2-A_ARM` VMs gives:
+The simple whole-pool VM view is:
 
-- **Resource-bound maximum:** add **34 PBU_C-A VMs**, increasing PBU_C-A capacity by **47.2%**.
-- **Balanced 6-AMF deployment:** add **30 PBU_C-A VMs** (5 per AMF), increasing PBU_C-A capacity by **41.7%**.
+$$
+\frac{47}{318} = 14.8\%
+$$
 
-The result is positive as long as PBU_C-A is on the capacity-critical path and other system components are not the next bottleneck.
+This is correct, but it understates the performance value because not every AMF VM type scales with service volume. After excluding fixed-overhead VM types, the capacity-relevant gain becomes:
+
+- **18.2%** by VM count.
+- **22.4%** CPU headroom for traffic-sensitive functions.
+- **17.7%** memory headroom, which is the conservative resource-bound capacity gain.
+- **19.9%** storage headroom.
+
+For reporting, the defensible headline is: **SRF releases enough PBU_C-A1 resources to provide about 18% additional capacity headroom for the AMF components that actually need to scale with traffic, with CPU headroom above 22%.**
 
 ## Why SRF Releases PBU_C-A1 Resources
 
@@ -29,6 +37,12 @@ This changes the 5G AMF model where RAN nodes are fully meshed with every AMF in
 | PBU_C-A1 VM resource | 12 core / 32 GB RAM / 38 GB storage |
 | PBU_C2-A VM resource | 12 core / 44 GB RAM / 38 GB storage |
 | PBU_C2-A dynamic spec per VM | 447 |
+
+The full AMF pool contains:
+
+$$
+\text{Total AMF VMs} = 6 \times 53 = 318
+$$
 
 ## PBU_C-A1 VM Savings
 
@@ -62,13 +76,98 @@ Released resources:
 
 | Resource | Calculation | Released |
 | --- | ---: | ---: |
-| CPU | 47 * 12 core | 564 core |
-| RAM | 47 * 32 GB | 1,504 GB |
-| Storage | 47 * 38 GB | 1,786 GB |
+| CPU | $47 \times 12$ core | 564 core |
+| RAM | $47 \times 32$ GB | 1,504 GB |
+| Storage | $47 \times 38$ GB | 1,786 GB |
 
-## Reuse Resources to Scale PBU_C-A
+## Why 14.8% Understates the Performance Gain
 
-The target scale-out VM is `PBU_C2-A_ARM`, treated here as the PBU_C-A processing VM. Each additional VM needs:
+The direct VM-count gain over the whole AMF pool is:
+
+$$
+\text{Whole-pool VM gain} = \frac{47}{318} = 14.8\%
+$$
+
+This denominator includes VM types that are mostly fixed overhead and do not need to scale linearly when service volume increases:
+
+| Fixed-overhead VM type | Pool VMs | Pool CPU | Pool RAM | Pool Storage |
+| --- | ---: | ---: | ---: | ---: |
+| `OMU_ARM` | 12 | 144 core | 816 GB | 4,200 GB |
+| `PBU_C-A3_ARM` | 12 | 96 core | 216 GB | 336 GB |
+| `OMU_L1_ARM` | 12 | 48 core | 312 GB | 480 GB |
+| `PBU_L_ARM` | 12 | 48 core | 288 GB | 384 GB |
+| `PBU_L-M_ARM` | 12 | 48 core | 264 GB | 312 GB |
+| **Fixed-overhead total** | **60** | **384 core** | **1,896 GB** | **5,712 GB** |
+
+So the service-volume-sensitive baseline should exclude those fixed VM types:
+
+$$
+\text{Capacity-relevant VMs} = 318 - 60 = 258
+$$
+
+The VM-count gain for the part of AMF that actually scales with service volume is:
+
+$$
+\text{Capacity-relevant VM gain} = \frac{47}{258} = 18.2\%
+$$
+
+This is a stronger and more accurate denominator than the whole-pool `47 / 318` view.
+
+## Resource-Weighted Capacity Gain
+
+The AMF baseline per instance is 53 VMs, 484 cores, 1,736 GB RAM, and 2,448 GB storage. Across 6 AMFs:
+
+$$
+\text{Pool CPU} = 6 \times 484 = 2{,}904\ \text{core}
+$$
+
+$$
+\text{Pool RAM} = 6 \times 1{,}736 = 10{,}416\ \text{GB}
+$$
+
+$$
+\text{Pool storage} = 6 \times 2{,}448 = 14{,}688\ \text{GB}
+$$
+
+After excluding fixed-overhead VM types:
+
+$$
+\text{Capacity-relevant CPU} = 2{,}904 - 384 = 2{,}520\ \text{core}
+$$
+
+$$
+\text{Capacity-relevant RAM} = 10{,}416 - 1{,}896 = 8{,}520\ \text{GB}
+$$
+
+$$
+\text{Capacity-relevant storage} = 14{,}688 - 5{,}712 = 8{,}976\ \text{GB}
+$$
+
+The 47 saved PBU_C-A1 VMs release 564 cores, 1,504 GB RAM, and 1,786 GB storage. Therefore the resource-weighted gains are:
+
+$$
+\text{CPU gain} = \frac{564}{2{,}520} = 22.4\%
+$$
+
+$$
+\text{RAM gain} = \frac{1{,}504}{8{,}520} = 17.7\%
+$$
+
+$$
+\text{Storage gain} = \frac{1{,}786}{8{,}976} = 19.9\%
+$$
+
+If the AMF traffic-sensitive functions need CPU, memory, and storage to scale together, the conservative capacity gain is bounded by memory:
+
+$$
+\text{Conservative capacity gain} = \min(22.4\%, 17.7\%, 19.9\%) = 17.7\%
+$$
+
+If the reported KPI is CPU-bound signalling processing headroom, the gain can be reported as **22.4% CPU headroom** for the capacity-relevant AMF components.
+
+## Optional: Reuse Resources to Scale PBU_C-A
+
+If the released resources are specifically reused to add `PBU_C2-A_ARM` VMs, each additional VM needs:
 
 $$
 \text{PBU\_C2-A resource per VM} = 12\ \text{core} + 44\ \text{GB RAM} + 38\ \text{GB storage}
@@ -78,13 +177,13 @@ Maximum additional VMs by each resource:
 
 | Constraint | Calculation | Max new PBU_C-A VMs |
 | --- | ---: | ---: |
-| CPU | floor(564 / 12) | 47 |
-| RAM | floor(1,504 / 44) | 34 |
-| Storage | floor(1,786 / 38) | 47 |
+| CPU | $\left\lfloor 564 / 12 \right\rfloor$ | 47 |
+| RAM | $\left\lfloor 1{,}504 / 44 \right\rfloor$ | 34 |
+| Storage | $\left\lfloor 1{,}786 / 38 \right\rfloor$ | 47 |
 
 RAM is the binding constraint, so the released PBU_C-A1 resources can support **34 additional PBU_C-A VMs** without adding extra memory.
 
-## Capacity Gain
+## PBU_C-A Scale-Out Capacity Gain
 
 Current PBU_C-A pool:
 
@@ -140,9 +239,15 @@ This is an upper bound because the released memory is insufficient for 47 standa
 
 ## Conclusion
 
-The SRF solution can increase system capacity if released PBU_C-A1 resources are reused for PBU_C-A scale-out. Under the current VM profiles, the defensible planning number is:
+The SRF solution can increase system capacity if released PBU_C-A1 resources are reused for traffic-sensitive AMF functions. The whole-pool VM gain is **14.8%**, but this includes fixed-overhead VMs that do not need to scale with service volume.
 
-- **41.7% capacity gain** for an evenly balanced 6-AMF deployment.
-- **47.2% capacity gain** if the 34 added PBU_C-A VMs can be placed flexibly across the pool.
+After excluding fixed-overhead VM types, the better performance view is:
 
-This proof assumes PBU_C-A processing capacity is the limiting factor. If another AMF component becomes the bottleneck first, the end-to-end system gain will be capped by that component.
+- **18.2% capacity-relevant VM gain**.
+- **22.4% CPU headroom gain**.
+- **17.7% conservative resource-bound capacity gain**.
+- **19.9% storage headroom gain**.
+
+This gives a stronger message for management: **SRF is not only reducing VM count; it releases a meaningful amount of reusable compute resource from the signalling fan-out layer and converts it into about 18% extra capacity headroom for the AMF components that actually scale with traffic.**
+
+This proof assumes the excluded VM types remain fixed as service volume increases. If another non-excluded AMF component becomes the next bottleneck, the end-to-end system gain will be capped by that component.

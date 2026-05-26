@@ -17,7 +17,6 @@ Interactive Vite + React dashboard for estimating SRF architecture ROI in a 6G c
 - `src/styles.css`: Tailwind and global styles.
 - `index.html`: Vite HTML entrypoint.
 - `Dockerfile` and `nginx.conf`: production container build and static serving config.
-- `from_gemini_canvas.tsx`: archived/reference component variant.
 
 ## Getting Started
 
