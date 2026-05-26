@@ -34,29 +34,29 @@ This changes the 5G AMF model where RAN nodes are fully meshed with every AMF in
 
 5G AMF pool link count:
 
-```text
-L_5G = M * N = 150,000 * 6 = 900,000
-```
+$$
+L_{5G} = M \times N = 150{,}000 \times 6 = 900{,}000
+$$
 
 SRF link count:
 
-```text
-L_SRF = M * K + K * N = 150,000 * 2 + 2 * 6 = 300,012
-```
+$$
+L_{SRF} = M \times K + K \times N = 150{,}000 \times 2 + 2 \times 6 = 300{,}012
+$$
 
 Reduction ratio:
 
-```text
-rho = (L_5G - L_SRF) / L_5G
-    = (900,000 - 300,012) / 900,000
-    = 66.665%
-```
+$$
+\rho = \frac{L_{5G} - L_{SRF}}{L_{5G}}
+     = \frac{900{,}000 - 300{,}012}{900{,}000}
+     = 66.665\%
+$$
 
 Conservative PBU_C-A1 VM savings:
 
-```text
-Saved PBU_C-A1 VMs = floor(72 * 66.665%) = 47
-```
+$$
+\text{Saved PBU\_C-A1 VMs} = \left\lfloor 72 \times 66.665\% \right\rfloor = 47
+$$
 
 Released resources:
 
@@ -70,9 +70,9 @@ Released resources:
 
 The target scale-out VM is `PBU_C2-A_ARM`, treated here as the PBU_C-A processing VM. Each additional VM needs:
 
-```text
-12 core / 44 GB RAM / 38 GB storage
-```
+$$
+\text{PBU\_C2-A resource per VM} = 12\ \text{core} + 44\ \text{GB RAM} + 38\ \text{GB storage}
+$$
 
 Maximum additional VMs by each resource:
 
@@ -88,35 +88,53 @@ RAM is the binding constraint, so the released PBU_C-A1 resources can support **
 
 Current PBU_C-A pool:
 
-```text
-Current PBU_C-A VMs = 6 AMFs * 12 VMs per AMF = 72
-Current capacity = 72 * 447 = 32,184 dynamic-spec units
-```
+$$
+\text{Current PBU\_C-A VMs} = 6 \times 12 = 72
+$$
+
+$$
+\text{Current capacity} = 72 \times 447 = 32{,}184\ \text{dynamic-spec units}
+$$
 
 Resource-bound maximum:
 
-```text
-New VMs = 72 + 34 = 106
-New capacity = 106 * 447 = 47,382
-Capacity gain = 47,382 / 32,184 - 1 = 47.2%
-```
+$$
+\text{New VMs} = 72 + 34 = 106
+$$
+
+$$
+\text{New capacity} = 106 \times 447 = 47{,}382
+$$
+
+$$
+\text{Capacity gain} = \frac{47{,}382}{32{,}184} - 1 = 47.2\%
+$$
 
 Balanced deployment across 6 AMFs:
 
-```text
-Balanced added VMs = floor(34 / 6) * 6 = 30
-New VMs = 72 + 30 = 102
-New capacity = 102 * 447 = 45,594
-Capacity gain = 45,594 / 32,184 - 1 = 41.7%
-```
+$$
+\text{Balanced added VMs} = \left\lfloor \frac{34}{6} \right\rfloor \times 6 = 30
+$$
+
+$$
+\text{New VMs} = 72 + 30 = 102
+$$
+
+$$
+\text{New capacity} = 102 \times 447 = 45{,}594
+$$
+
+$$
+\text{Capacity gain} = \frac{45{,}594}{32{,}184} - 1 = 41.7\%
+$$
 
 ## Sensitivity
 
 If the deployment can add extra memory or use a PBU_C-A flavor closer to the PBU_C-A1 memory profile, CPU and storage would allow up to **47 additional PBU_C-A VMs**:
 
-```text
-Capacity gain = 47 / 72 = 65.3%
-```
+$$
+\text{Capacity gain} = \frac{47}{72} = 65.3\%
+$$
 
 This is an upper bound because the released memory is insufficient for 47 standard `PBU_C2-A_ARM` VMs.
 
