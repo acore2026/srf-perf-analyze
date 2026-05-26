@@ -41,7 +41,7 @@ This changes the 5G AMF model where RAN nodes are fully meshed with every AMF in
 The full AMF pool contains:
 
 $$
-\text{Total AMF VMs} = 6 \times 53 = 318
+V_{\mathrm{total}} = 6 \times 53 = 318
 $$
 
 ## PBU_C-A1 VM Savings
@@ -69,7 +69,7 @@ $$
 Conservative PBU_C-A1 VM savings:
 
 $$
-\text{Saved PBU\_C-A1 VMs} = \left\lfloor 72 \times 66.665\% \right\rfloor = 47
+V_{\mathrm{saved}} = \left\lfloor 72 \times 66.665\% \right\rfloor = 47
 $$
 
 Released resources:
@@ -85,7 +85,7 @@ Released resources:
 The direct VM-count gain over the whole AMF pool is:
 
 $$
-\text{Whole-pool VM gain} = \frac{47}{318} = 14.8\%
+G_{\mathrm{whole\ pool}} = \frac{47}{318} = 14.8\%
 $$
 
 This denominator includes VM types that are mostly fixed overhead and do not need to scale linearly when service volume increases:
@@ -102,13 +102,13 @@ This denominator includes VM types that are mostly fixed overhead and do not nee
 So the service-volume-sensitive baseline should exclude those fixed VM types:
 
 $$
-\text{Capacity-relevant VMs} = 318 - 60 = 258
+V_{\mathrm{capacity}} = 318 - 60 = 258
 $$
 
 The VM-count gain for the part of AMF that actually scales with service volume is:
 
 $$
-\text{Capacity-relevant VM gain} = \frac{47}{258} = 18.2\%
+G_{\mathrm{capacity\ VM}} = \frac{47}{258} = 18.2\%
 $$
 
 This is a stronger and more accurate denominator than the whole-pool `47 / 318` view.
@@ -118,49 +118,49 @@ This is a stronger and more accurate denominator than the whole-pool `47 / 318` 
 The AMF baseline per instance is 53 VMs, 484 cores, 1,736 GB RAM, and 2,448 GB storage. Across 6 AMFs:
 
 $$
-\text{Pool CPU} = 6 \times 484 = 2{,}904\ \text{core}
+C_{\mathrm{pool}} = 6 \times 484 = 2{,}904\ \mathrm{core}
 $$
 
 $$
-\text{Pool RAM} = 6 \times 1{,}736 = 10{,}416\ \text{GB}
+R_{\mathrm{pool}} = 6 \times 1{,}736 = 10{,}416\ \mathrm{GB}
 $$
 
 $$
-\text{Pool storage} = 6 \times 2{,}448 = 14{,}688\ \text{GB}
+S_{\mathrm{pool}} = 6 \times 2{,}448 = 14{,}688\ \mathrm{GB}
 $$
 
 After excluding fixed-overhead VM types:
 
 $$
-\text{Capacity-relevant CPU} = 2{,}904 - 384 = 2{,}520\ \text{core}
+C_{\mathrm{capacity}} = 2{,}904 - 384 = 2{,}520\ \mathrm{core}
 $$
 
 $$
-\text{Capacity-relevant RAM} = 10{,}416 - 1{,}896 = 8{,}520\ \text{GB}
+R_{\mathrm{capacity}} = 10{,}416 - 1{,}896 = 8{,}520\ \mathrm{GB}
 $$
 
 $$
-\text{Capacity-relevant storage} = 14{,}688 - 5{,}712 = 8{,}976\ \text{GB}
+S_{\mathrm{capacity}} = 14{,}688 - 5{,}712 = 8{,}976\ \mathrm{GB}
 $$
 
 The 47 saved PBU_C-A1 VMs release 564 cores, 1,504 GB RAM, and 1,786 GB storage. Therefore the resource-weighted gains are:
 
 $$
-\text{CPU gain} = \frac{564}{2{,}520} = 22.4\%
+G_{\mathrm{CPU}} = \frac{564}{2{,}520} = 22.4\%
 $$
 
 $$
-\text{RAM gain} = \frac{1{,}504}{8{,}520} = 17.7\%
+G_{\mathrm{RAM}} = \frac{1{,}504}{8{,}520} = 17.7\%
 $$
 
 $$
-\text{Storage gain} = \frac{1{,}786}{8{,}976} = 19.9\%
+G_{\mathrm{storage}} = \frac{1{,}786}{8{,}976} = 19.9\%
 $$
 
 If the AMF traffic-sensitive functions need CPU, memory, and storage to scale together, the conservative capacity gain is bounded by memory:
 
 $$
-\text{Conservative capacity gain} = \min(22.4\%, 17.7\%, 19.9\%) = 17.7\%
+G_{\mathrm{conservative}} = \min(22.4\%, 17.7\%, 19.9\%) = 17.7\%
 $$
 
 If the reported KPI is CPU-bound signalling processing headroom, the gain can be reported as **22.4% CPU headroom** for the capacity-relevant AMF components.
@@ -170,7 +170,7 @@ If the reported KPI is CPU-bound signalling processing headroom, the gain can be
 If the released resources are specifically reused to add `PBU_C2-A_ARM` VMs, each additional VM needs:
 
 $$
-\text{PBU\_C2-A resource per VM} = 12\ \text{core} + 44\ \text{GB RAM} + 38\ \text{GB storage}
+R_{\mathrm{C2A}} = 12\ \mathrm{core} + 44\ \mathrm{GB\ RAM} + 38\ \mathrm{GB\ storage}
 $$
 
 Maximum additional VMs by each resource:
@@ -188,43 +188,43 @@ RAM is the binding constraint, so the released PBU_C-A1 resources can support **
 Current PBU_C-A pool:
 
 $$
-\text{Current PBU\_C-A VMs} = 6 \times 12 = 72
+V_{\mathrm{CA,current}} = 6 \times 12 = 72
 $$
 
 $$
-\text{Current capacity} = 72 \times 447 = 32{,}184\ \text{dynamic-spec units}
+Q_{\mathrm{current}} = 72 \times 447 = 32{,}184
 $$
 
 Resource-bound maximum:
 
 $$
-\text{New VMs} = 72 + 34 = 106
+V_{\mathrm{new}} = 72 + 34 = 106
 $$
 
 $$
-\text{New capacity} = 106 \times 447 = 47{,}382
+Q_{\mathrm{new}} = 106 \times 447 = 47{,}382
 $$
 
 $$
-\text{Capacity gain} = \frac{47{,}382}{32{,}184} - 1 = 47.2\%
+G_{\mathrm{CA}} = \frac{47{,}382}{32{,}184} - 1 = 47.2\%
 $$
 
 Balanced deployment across 6 AMFs:
 
 $$
-\text{Balanced added VMs} = \left\lfloor \frac{34}{6} \right\rfloor \times 6 = 30
+V_{\mathrm{balanced\ added}} = \left\lfloor \frac{34}{6} \right\rfloor \times 6 = 30
 $$
 
 $$
-\text{New VMs} = 72 + 30 = 102
+V_{\mathrm{balanced\ new}} = 72 + 30 = 102
 $$
 
 $$
-\text{New capacity} = 102 \times 447 = 45{,}594
+Q_{\mathrm{balanced}} = 102 \times 447 = 45{,}594
 $$
 
 $$
-\text{Capacity gain} = \frac{45{,}594}{32{,}184} - 1 = 41.7\%
+G_{\mathrm{balanced}} = \frac{45{,}594}{32{,}184} - 1 = 41.7\%
 $$
 
 ## Sensitivity
@@ -232,7 +232,7 @@ $$
 If the deployment can add extra memory or use a PBU_C-A flavor closer to the PBU_C-A1 memory profile, CPU and storage would allow up to **47 additional PBU_C-A VMs**:
 
 $$
-\text{Capacity gain} = \frac{47}{72} = 65.3\%
+G_{\mathrm{upper}} = \frac{47}{72} = 65.3\%
 $$
 
 This is an upper bound because the released memory is insufficient for 47 standard `PBU_C2-A_ARM` VMs.
