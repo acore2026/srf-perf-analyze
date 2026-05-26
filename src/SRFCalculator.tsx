@@ -39,6 +39,17 @@ type Translation = {
   ramFreed: string;
   storageFreed: string;
   overallGain: string;
+  fullPoolVmGain: string;
+  capacityVmGain: string;
+  cpuHeadroom: string;
+  ramHeadroom: string;
+  storageHeadroom: string;
+  conservativeGain: string;
+  fixedOverheadTitle: string;
+  fixedOverheadDescription: (fixedVms: string, totalVms: string) => string;
+  fixedOverheadTypes: string;
+  ratioDetail: (saved: string, total: string) => string;
+  conservativeDetail: string;
   totalVms: string;
   totalCpu: string;
   totalRam: string;
@@ -86,6 +97,17 @@ const copy: Record<Language, Translation> = {
     ramFreed: 'RAM Freed',
     storageFreed: 'Storage Freed',
     overallGain: 'Overall AMF Pool Performance Gain',
+    fullPoolVmGain: 'Whole-Pool VM Gain',
+    capacityVmGain: 'Capacity-Relevant VM Gain',
+    cpuHeadroom: 'CPU Headroom',
+    ramHeadroom: 'RAM Headroom',
+    storageHeadroom: 'Storage Headroom',
+    conservativeGain: 'Conservative Capacity Gain',
+    fixedOverheadTitle: 'Fixed-overhead VMs excluded from performance denominator',
+    fixedOverheadDescription: (fixedVms, totalVms) => `${fixedVms} fixed-overhead VMs are excluded from the ${totalVms}-VM pool because they do not need to scale linearly with service volume.`,
+    fixedOverheadTypes: 'OMU_ARM, PBU_C-A3_ARM, OMU_L1_ARM, PBU_L_ARM, PBU_L-M_ARM',
+    ratioDetail: (saved, total) => `${saved} / ${total} VMs`,
+    conservativeDetail: 'Bounded by the lowest reusable resource headroom.',
     totalVms: 'Total VMs',
     totalCpu: 'Total CPU',
     totalRam: 'Total RAM',
@@ -131,6 +153,17 @@ const copy: Record<Language, Translation> = {
     ramFreed: '释放 RAM',
     storageFreed: '释放存储',
     overallGain: 'AMF 池整体性能收益',
+    fullPoolVmGain: '全池 VM 收益',
+    capacityVmGain: '容量相关 VM 收益',
+    cpuHeadroom: 'CPU 余量',
+    ramHeadroom: '内存余量',
+    storageHeadroom: '存储余量',
+    conservativeGain: '保守容量收益',
+    fixedOverheadTitle: '性能分母中排除固定开销 VM',
+    fixedOverheadDescription: (fixedVms, totalVms) => `从 ${totalVms} 个 VM 中排除 ${fixedVms} 个固定开销 VM，因为这些 VM 不随业务量线性扩容。`,
+    fixedOverheadTypes: 'OMU_ARM、PBU_C-A3_ARM、OMU_L1_ARM、PBU_L_ARM、PBU_L-M_ARM',
+    ratioDetail: (saved, total) => `${saved} / ${total} VM`,
+    conservativeDetail: '取可复用资源余量中的最小值。',
     totalVms: '总 VM',
     totalCpu: '总 CPU',
     totalRam: '总 RAM',
@@ -171,6 +204,13 @@ export default function SRFCalculator() {
   const [amfTotalRam] = useState(1736);
   const [amfTotalStorage] = useState(2448);
 
+  // Fixed-overhead VM types that do not scale linearly with service volume:
+  // OMU_ARM, PBU_C-A3_ARM, OMU_L1_ARM, PBU_L_ARM, PBU_L-M_ARM.
+  const fixedOverheadVmsPerAmf = 10;
+  const fixedOverheadCoresPerAmf = 64;
+  const fixedOverheadRamPerAmf = 316;
+  const fixedOverheadStoragePerAmf = 952;
+
   const links5G = ranNodes * amfInstances;
   const links6G = (ranNodes * srfInstances) + (srfInstances * amfInstances);
   const linksEliminated = links5G - links6G;
@@ -193,21 +233,35 @@ export default function SRFCalculator() {
   const poolTotalRam = amfInstances * amfTotalRam;
   const poolTotalStorage = amfInstances * amfTotalStorage;
 
-  const pctVmsSaved = poolTotalVms > 0 && isPositiveGain ? vmsSaved / poolTotalVms : 0;
-  const pctCoresSaved = poolTotalCores > 0 && isPositiveGain ? macroCoresSaved / poolTotalCores : 0;
-  const pctRamSaved = poolTotalRam > 0 && isPositiveGain ? macroRamSaved / poolTotalRam : 0;
-  const pctStorageSaved = poolTotalStorage > 0 && isPositiveGain ? macroStorageSaved / poolTotalStorage : 0;
+  const fixedOverheadVms = amfInstances * fixedOverheadVmsPerAmf;
+  const fixedOverheadCores = amfInstances * fixedOverheadCoresPerAmf;
+  const fixedOverheadRam = amfInstances * fixedOverheadRamPerAmf;
+  const fixedOverheadStorage = amfInstances * fixedOverheadStoragePerAmf;
+
+  const capacityRelevantVms = Math.max(poolTotalVms - fixedOverheadVms, 0);
+  const capacityRelevantCores = Math.max(poolTotalCores - fixedOverheadCores, 0);
+  const capacityRelevantRam = Math.max(poolTotalRam - fixedOverheadRam, 0);
+  const capacityRelevantStorage = Math.max(poolTotalStorage - fixedOverheadStorage, 0);
+
+  const wholePoolVmGain = poolTotalVms > 0 && isPositiveGain ? vmsSaved / poolTotalVms : 0;
+  const capacityRelevantVmGain = capacityRelevantVms > 0 && isPositiveGain ? vmsSaved / capacityRelevantVms : 0;
+  const cpuHeadroomGain = capacityRelevantCores > 0 && isPositiveGain ? macroCoresSaved / capacityRelevantCores : 0;
+  const ramHeadroomGain = capacityRelevantRam > 0 && isPositiveGain ? macroRamSaved / capacityRelevantRam : 0;
+  const storageHeadroomGain = capacityRelevantStorage > 0 && isPositiveGain ? macroStorageSaved / capacityRelevantStorage : 0;
+  const conservativeResourceGain = Math.min(cpuHeadroomGain, ramHeadroomGain, storageHeadroomGain);
 
   const formatNumber = (num: number) => new Intl.NumberFormat(locale).format(Math.round(num));
   const formatDecimal = (num: number) => new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
   const formatPercent = (num: number) => new Intl.NumberFormat(locale, { style: 'percent', minimumFractionDigits: 1 }).format(num);
 
   const toggleLanguage = () => setLanguage((current) => (current === 'en' ? 'zh' : 'en'));
-  const overallGainMetrics: Array<[string, number]> = [
-    [t.totalVms, pctVmsSaved],
-    [t.totalCpu, pctCoresSaved],
-    [t.totalRam, pctRamSaved],
-    [t.totalStorage, pctStorageSaved]
+  const overallGainMetrics: Array<[string, number, string]> = [
+    [t.fullPoolVmGain, wholePoolVmGain, t.ratioDetail(formatNumber(vmsSaved), formatNumber(poolTotalVms))],
+    [t.capacityVmGain, capacityRelevantVmGain, t.ratioDetail(formatNumber(vmsSaved), formatNumber(capacityRelevantVms))],
+    [t.cpuHeadroom, cpuHeadroomGain, `${formatNumber(macroCoresSaved)} / ${formatNumber(capacityRelevantCores)} ${t.cores}`],
+    [t.ramHeadroom, ramHeadroomGain, `${formatNumber(macroRamSaved)} / ${formatNumber(capacityRelevantRam)} ${t.gb}`],
+    [t.storageHeadroom, storageHeadroomGain, `${formatNumber(macroStorageSaved)} / ${formatNumber(capacityRelevantStorage)} ${t.gb}`],
+    [t.conservativeGain, conservativeResourceGain, t.conservativeDetail]
   ];
 
   return (
@@ -421,11 +475,19 @@ export default function SRFCalculator() {
 
                 <div className="mt-4 border-t border-zinc-200 pt-3">
                   <h3 className="mb-3 text-xs font-semibold uppercase text-zinc-500">{t.overallGain}</h3>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {overallGainMetrics.map(([label, value]) => (
+                  <div className="mb-3 border border-zinc-300 bg-zinc-50 p-3">
+                    <p className="text-xs font-semibold text-zinc-800">{t.fixedOverheadTitle}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-zinc-600">
+                      {t.fixedOverheadDescription(formatNumber(fixedOverheadVms), formatNumber(poolTotalVms))}
+                    </p>
+                    <p className="mt-2 text-xs text-zinc-600">{t.fixedOverheadTypes}</p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {overallGainMetrics.map(([label, value, detail]) => (
                       <div key={label} className="border border-zinc-300 p-3">
                         <p className="text-lg font-semibold text-zinc-950">{formatPercent(value)}</p>
                         <p className="mt-1 text-xs font-medium text-zinc-600">{label}</p>
+                        <p className="mt-2 text-[11px] leading-snug text-zinc-500">{detail}</p>
                       </div>
                     ))}
                   </div>
